@@ -4,7 +4,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libpq-dev \
         libpng-dev \
-        php-gettext \
+        # php-gettext \
         nano \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -41,9 +41,10 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install zip unzip
 
-RUN apt-get update && apt-get -y install cron
+RUN apt-get update && apt-get install -y cron
 RUN touch /var/log/cron.log
 
-CMD php-fpm && cron && tail -f /var/log/cron.log
+RUN apt-get update && apt-get install -y supervisor
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
